@@ -185,7 +185,7 @@ class App extends Container implements DatabaseConnectionFactoryInterface, Logge
      *
      * @return void
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger) : void
     {
         $this->logger = $logger;
     }
@@ -197,6 +197,7 @@ class App extends Container implements DatabaseConnectionFactoryInterface, Logge
      */
     protected function getLogger()
     {
+        /** @phpstan-ignore-next-line */
         return $this->logger ?: new NullLogger();
     }
 

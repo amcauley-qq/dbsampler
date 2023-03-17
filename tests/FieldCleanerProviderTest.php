@@ -17,7 +17,7 @@ class FieldCleanerProviderTest extends TestCase
         $this->fieldCleaner = new FieldCleanerProvider();
     }
 
-    public function randomDigitsProvider(): array
+    public static function randomDigitsProvider(): array
     {
         return [
             [5],

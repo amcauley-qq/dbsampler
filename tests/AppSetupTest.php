@@ -27,10 +27,10 @@ class AppSetupTest extends SqliteBasedTestCase
         $app->performMigrationSet('small-sqlite-test');
 
         // Test copies over only apples, pears, and the baskets containing them
-        $this->assertSame('2', $this->destConnection->query('SELECT COUNT(*) FROM fruits')->fetchColumn());
-        $this->assertSame('2', $this->destConnection->query('SELECT COUNT(*) FROM fruit_x_basket')->fetchColumn());
-        $this->assertSame('3', $this->sourceConnection->query('SELECT COUNT(*) FROM baskets')->fetchColumn());
-        $this->assertSame('2', $this->destConnection->query('SELECT COUNT(*) FROM baskets')->fetchColumn());
+        $this->assertSame(2, $this->destConnection->query('SELECT COUNT(*) FROM fruits')->fetchColumn());
+        $this->assertSame(2, $this->destConnection->query('SELECT COUNT(*) FROM fruit_x_basket')->fetchColumn());
+        $this->assertSame(3, $this->sourceConnection->query('SELECT COUNT(*) FROM baskets')->fetchColumn());
+        $this->assertSame(2, $this->destConnection->query('SELECT COUNT(*) FROM baskets')->fetchColumn());
     }
 
     /**
@@ -42,7 +42,8 @@ class AppSetupTest extends SqliteBasedTestCase
     public function testSqliteCredentialMissingDirectoryHandling(): void
     {
         $config = MigrationConfigurationCollection::fromFilePaths([$this->fixturesDir . '/small_sqlite_migration.json']);
-
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage('Directory is required in sqlite configuration');
         $app = new App($config);
         $app->loadCredentialsFile($this->fixturesDir . '/sqlite-credentials-no-dir.json');
         $app->createDestConnectionByDbName('small-sqlite-source'); // directory tested at connection time now
@@ -64,7 +65,7 @@ class AppSetupTest extends SqliteBasedTestCase
 
         $configuredPath = $app['db.credentials']->directory;
         $this->assertTrue(is_dir($configuredPath), "Sqlite relative directory path should resolve");
-        $this->assertRegExp('#/tests/#', $configuredPath, 'Sqlite relative directory must resolve to full path');
+        $this->assertMatchesRegularExpression('#/tests/#', $configuredPath, 'Sqlite relative directory must resolve to full path');
     }
 
     /**
